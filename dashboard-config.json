@@ -1,0 +1,35 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "# Autonomous Pipeline Monitoring\nTrack Azure Data Factory execution health and failures."
+      }
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "title": "Pipeline Runs — Last 7 Days",
+        "query": "ADFPipelineRun | where TimeGenerated > ago(7d) | summarize TotalRuns=count(), SuccessfulRuns=countif(Status == 'Succeeded'), FailedRuns=countif(Status == 'Failed') | extend SuccessRate=round(100.0 * SuccessfulRuns / TotalRuns, 2)",
+        "size": 1,
+        "timeContext": {
+          "durationMs": 604800000
+        }
+      }
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "title": "Pipeline Failures Over Time",
+        "query": "ADFPipelineRun | where TimeGenerated > ago(7d) | where Status == 'Failed' | summarize Failures=count() by bin(TimeGenerated, 1h) | render timechart",
+        "size": 1,
+        "timeContext": {
+          "durationMs": 604800000
+        }
+      }
+    }
+  ]
+}

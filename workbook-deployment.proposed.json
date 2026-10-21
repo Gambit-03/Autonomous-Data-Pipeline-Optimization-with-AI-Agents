@@ -1,0 +1,46 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "proposalStatus": "REVIEW ONLY. Deploy only after explicit user approval."
+  },
+  "parameters": {
+    "workbookName": {
+      "type": "string",
+      "defaultValue": "b336a2e2-f855-4b7f-9da0-414037a10255",
+      "metadata": {
+        "description": "Unique workbook resource GUID; change only after checking for collisions."
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "eastus",
+      "metadata": {
+        "description": "Existing project resource-group/workspace region."
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Insights/workbooks",
+      "apiVersion": "2023-06-01",
+      "name": "[parameters('workbookName')]",
+      "location": "[parameters('location')]",
+      "kind": "shared",
+      "properties": {
+        "displayName": "OrderQualityAI Pipeline Health and Performance",
+        "category": "workbook",
+        "description": "Pipeline health and activity performance from the existing Log Analytics workspace; links to reports stored in the existing reports container.",
+        "sourceId": "/subscriptions/e4c83ad5-aeaa-4eb0-bd52-6c358e420f9d/resourceGroups/rg-autonomous-pipeline-demo/providers/Microsoft.OperationalInsights/workspaces/la-autonomous-pipeline-demo",
+        "serializedData": "{\"$schema\":\"https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json\",\"version\":\"Notebook/1.0\",\"fallbackResourceIds\":[\"/subscriptions/e4c83ad5-aeaa-4eb0-bd52-6c358e420f9d/resourceGroups/rg-autonomous-pipeline-demo/providers/Microsoft.OperationalInsights/workspaces/la-autonomous-pipeline-demo\"],\"isLocked\":false,\"items\":[{\"type\":1,\"content\":{\"json\":\"# Autonomous Pipeline Monitoring\\nPipeline health, activity performance and Data Flow output counts from Azure Monitor Logs. Quality report JSON is stored separately in Blob Storage and is linked by path only; this Workbook does not read or render blob JSON.\"}},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"title\":\"Pipeline Runs — Last 7 Days\",\"query\":\"ADFPipelineRun\\n| where TimeGenerated > ago(7d)\\n| summarize arg_max(TimeGenerated, *) by RunId\\n| summarize TotalRuns=count(), SuccessfulRuns=countif(Status == 'Succeeded'), FailedRuns=countif(Status == 'Failed')\",\"size\":1,\"timeContext\":{\"durationMs\":604800000},\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"crossComponentResources\":[\"/subscriptions/e4c83ad5-aeaa-4eb0-bd52-6c358e420f9d/resourceGroups/rg-autonomous-pipeline-demo/providers/Microsoft.OperationalInsights/workspaces/la-autonomous-pipeline-demo\"]}},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"title\":\"Pipeline Failures Over Time\",\"query\":\"let failures =\\n    ADFPipelineRun\\n    | where TimeGenerated > ago(7d) and Status == 'Failed'\\n    | summarize FailedRuns=count() by TimeGenerated=bin(TimeGenerated, 1h);\\nrange TimeGenerated from bin(ago(7d), 1h) to bin(now(), 1h) step 1h\\n| join kind=leftouter failures on TimeGenerated\\n| project TimeGenerated, FailedRuns=coalesce(FailedRuns, 0)\\n| sort by TimeGenerated asc\\n| render timechart\",\"size\":1,\"timeContext\":{\"durationMs\":604800000},\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"crossComponentResources\":[\"/subscriptions/e4c83ad5-aeaa-4eb0-bd52-6c358e420f9d/resourceGroups/rg-autonomous-pipeline-demo/providers/Microsoft.OperationalInsights/workspaces/la-autonomous-pipeline-demo\"]}},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"title\":\"Successful Activity Performance and Data Flow Output Counts\",\"query\":\"ADFActivityRun\\n| where TimeGenerated > ago(7d)\\n| summarize arg_max(TimeGenerated, *) by ActivityRunId\\n| where Status == 'Succeeded'\\n| extend output=parse_json(tostring(Output))\\n| extend acquisitionMs=tolong(output['runStatus']['computeAcquisitionDuration']), billable=parse_json(tostring(output['billingReference']['billableDuration'])), validRows=toint(output['runStatus']['metrics']['sinkValidRecords']['rowsWritten']), invalidRows=toint(output['runStatus']['metrics']['sinkInvalidRecords']['rowsWritten'])\\n| extend billableFirst=billable[0]\\n| project TimeGenerated, PipelineRunId, PipelineName, ActivityName, DurationSeconds=round(datetime_diff('second', End, Start), 1), ComputeAcquisitionSeconds=iff(isnotnull(acquisitionMs), round(todouble(acquisitionMs)/1000.0, 1), real(null)), BillableDuration=todouble(billableFirst.duration), BillableUnit=tostring(billableFirst.unit), ValidRows=validRows, InvalidRows=invalidRows\\n| order by TimeGenerated desc\",\"size\":2,\"timeContext\":{\"durationMs\":604800000},\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"crossComponentResources\":[\"/subscriptions/e4c83ad5-aeaa-4eb0-bd52-6c358e420f9d/resourceGroups/rg-autonomous-pipeline-demo/providers/Microsoft.OperationalInsights/workspaces/la-autonomous-pipeline-demo\"]}},{\"type\":1,\"content\":{\"json\":\"## Published reports\\n- [Run-scoped AI quality report](https://stautopipe097654.blob.core.windows.net/reports/demo-reports/20261021T173214Z/ai_quality_report_0ab4f5e6-cd71-11f1-a72d-f9fc223d98b0.json)\\n- [Seven-day pipeline failure-status report](https://stautopipe097654.blob.core.windows.net/reports/demo-reports/20261021T173214Z/pipeline_failure_analysis.json)\\n- [Performance report (JSON)](https://stautopipe097654.blob.core.windows.net/reports/demo-reports/20261021T173214Z/pipeline_performance_analysis.json)\\n- [Performance report (Markdown)](https://stautopipe097654.blob.core.windows.net/reports/demo-reports/20261021T173214Z/pipeline_performance_analysis.md)\\n\\nLinks require Azure sign-in. This Workbook proposal links to private report blobs; it does not fetch or display Blob JSON contents.\"}}]}",
+        "version": "Notebook/1.0"
+      }
+    }
+  ],
+  "outputs": {
+    "workbookResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Insights/workbooks', parameters('workbookName'))]"
+    }
+  }
+}

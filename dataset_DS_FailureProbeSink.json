@@ -1,0 +1,26 @@
+{
+  "name": "DS_FailureProbeSink",
+  "properties": {
+    "linkedServiceName": {
+      "referenceName": "LS_Autopipe_Storage",
+      "type": "LinkedServiceReference"
+    },
+    "type": "DelimitedText",
+    "schema": [],
+    "typeProperties": {
+      "location": {
+        "type": "AzureBlobFSLocation",
+        "fileSystem": "processed",
+        "folderPath": {
+          "value": "controlled-failure-tests/probe-20261022-7c92c6af",
+          "type": "Expression"
+        },
+        "fileName": "must-not-be-written.csv"
+      },
+      "columnDelimiter": ",",
+      "escapeChar": "\\",
+      "quoteChar": "\"",
+      "firstRowAsHeader": true
+    }
+  }
+}

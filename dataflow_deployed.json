@@ -1,0 +1,108 @@
+{
+  "etag": "8c0a119b-0000-0100-0000-6ad7d12d0000",
+  "id": "/subscriptions/e4c83ad5-aeaa-4eb0-bd52-6c358e420f9d/resourceGroups/rg-autonomous-pipeline-demo/providers/Microsoft.DataFactory/factories/adf-autopipe-482731/dataflows/DF_OrderQualityChecks",
+  "name": "DF_OrderQualityChecks",
+  "properties": {
+    "annotations": null,
+    "description": null,
+    "folder": null,
+    "script": null,
+    "scriptLines": [
+      "source(output(",
+      "          order_id as string,",
+      "          customer_id as string,",
+      "          product as string,",
+      "          quantity as integer,",
+      "          unit_price as decimal(10,0)",
+      "     ),",
+      "     allowSchemaDrift: true,",
+      "     validateSchema: false,",
+      "     ignoreNoFilesFound: false) ~> source1",
+      "WindowDetectDuplicates split(isNull(customer_id) || trim(customer_id) == '' || isNull(quantity) || quantity <= 0 || isNull(unit_price) || unit_price <= 0 || duplicate_rank > 1,",
+      "     disjoint: false) ~> invalidRecords@(invalidRecords, validRecords)",
+      "source1 window(over(customer_id,",
+      "          product,",
+      "          quantity,",
+      "          unit_price),",
+      "     asc(order_id, true),",
+      "     duplicate_rank = rowNumber()) ~> WindowDetectDuplicates",
+      "invalidRecords@validRecords sink(allowSchemaDrift: true,",
+      "     validateSchema: false,",
+      "     umask: 0022,",
+      "     preCommands: [],",
+      "     postCommands: [],",
+      "     skipDuplicateMapInputs: true,",
+      "     skipDuplicateMapOutputs: true,",
+      "     partitionBy('hash', 1)) ~> sinkValidRecords",
+      "invalidRecords@invalidRecords sink(allowSchemaDrift: true,",
+      "     validateSchema: false,",
+      "     umask: 0022,",
+      "     preCommands: [],",
+      "     postCommands: [],",
+      "     skipDuplicateMapInputs: true,",
+      "     skipDuplicateMapOutputs: true,",
+      "     partitionBy('hash', 1)) ~> sinkInvalidRecords"
+    ],
+    "sinks": [
+      {
+        "dataset": {
+          "parameters": null,
+          "referenceName": "DS_ValidOrders",
+          "type": "DatasetReference"
+        },
+        "description": null,
+        "flowlet": null,
+        "linkedService": null,
+        "name": "sinkValidRecords",
+        "rejectedDataLinkedService": null,
+        "schemaLinkedService": null
+      },
+      {
+        "dataset": {
+          "parameters": null,
+          "referenceName": "DS_InvalidOrders",
+          "type": "DatasetReference"
+        },
+        "description": null,
+        "flowlet": null,
+        "linkedService": null,
+        "name": "sinkInvalidRecords",
+        "rejectedDataLinkedService": null,
+        "schemaLinkedService": null
+      }
+    ],
+    "sources": [
+      {
+        "dataset": {
+          "parameters": null,
+          "referenceName": "SourceDataset_xp6",
+          "type": "DatasetReference"
+        },
+        "description": null,
+        "flowlet": null,
+        "linkedService": null,
+        "name": "source1",
+        "schemaLinkedService": null
+      }
+    ],
+    "transformations": [
+      {
+        "dataset": null,
+        "description": null,
+        "flowlet": null,
+        "linkedService": null,
+        "name": "invalidRecords"
+      },
+      {
+        "dataset": null,
+        "description": null,
+        "flowlet": null,
+        "linkedService": null,
+        "name": "WindowDetectDuplicates"
+      }
+    ],
+    "type": "MappingDataFlow"
+  },
+  "resourceGroup": "rg-autonomous-pipeline-demo",
+  "type": "Microsoft.DataFactory/factories/dataflows"
+}

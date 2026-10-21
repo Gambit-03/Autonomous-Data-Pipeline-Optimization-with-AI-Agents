@@ -1,0 +1,28 @@
+{
+    "linkedServiceName": {
+      "referenceName": "LS_Autopipe_Storage",
+      "type": "LinkedServiceReference"
+    },
+    "parameters": {
+      "runFolder": {
+        "type": "String"
+      }
+    },
+    "type": "DelimitedText",
+    "schema": [],
+    "typeProperties": {
+      "location": {
+        "type": "AzureBlobFSLocation",
+        "fileSystem": "processed",
+        "folderPath": {
+          "value": "@dataset().runFolder",
+          "type": "Expression"
+        },
+        "fileName": "orders_clean.csv"
+      },
+      "columnDelimiter": ",",
+      "escapeChar": "\\",
+      "quoteChar": "\"",
+      "firstRowAsHeader": true
+    }
+}

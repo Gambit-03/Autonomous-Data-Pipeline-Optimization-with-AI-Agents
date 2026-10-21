@@ -1,0 +1,28 @@
+{
+    "linkedServiceName": {
+      "referenceName": "LS_Autopipe_Storage",
+      "type": "LinkedServiceReference"
+    },
+    "parameters": {
+      "runFolder": {
+        "type": "String"
+      }
+    },
+    "type": "DelimitedText",
+    "schema": [],
+    "typeProperties": {
+      "location": {
+        "type": "AzureBlobFSLocation",
+        "fileSystem": "reports",
+        "folderPath": {
+          "value": "@dataset().runFolder",
+          "type": "Expression"
+        },
+        "fileName": "invalid_orders.csv"
+      },
+      "columnDelimiter": ",",
+      "escapeChar": "\\",
+      "quoteChar": "\"",
+      "firstRowAsHeader": true
+    }
+}

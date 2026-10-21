@@ -1,0 +1,81 @@
+{
+  "checked_at_utc": "2026-10-21T19:04:27.386033+00:00",
+  "source": "azure_data_factory_run_api",
+  "synthetic": false,
+  "controlled_test": true,
+  "pipeline_run_id": "5975768a-9209-4f56-92c5-2b3f06d2fff8",
+  "activity_run_id": "dd3de5ff-c53e-48c3-9e6c-f4f5beec47df",
+  "note": "Controlled isolated test failure; not a naturally occurring production incident. Log Analytics ingestion was still pending at analysis time.",
+  "failures": [
+    {
+      "observed_facts": {
+        "pipeline_name": "PL_PipelineFailureAgentProbe",
+        "run_id": "5975768a-9209-4f56-92c5-2b3f06d2fff8",
+        "status": "Failed",
+        "error_code": "2200",
+        "failure_type": "UserError",
+        "error_message": "ErrorCode=UserErrorFileNotFound, ADLS Gen2 operation returned NotFound. Account stautopipe097654, FileSystem raw, Path __orderqualityai_missing_probe_7c92c6af.csv; inner ErrorCode PathNotFound; message The specified path does not exist. RequestId 01b59166-501f-007f-638e-61a6b5000000.",
+        "time_generated": "2026-10-21T19:02:41.1470289Z",
+        "failed_activities": [
+          {
+            "activity_name": "CopyMissingTestFile",
+            "activity_run_id": "dd3de5ff-c53e-48c3-9e6c-f4f5beec47df",
+            "error_code": "2200",
+            "failure_type": "UserError",
+            "error_message": "ErrorCode=UserErrorFileNotFound, ADLS Gen2 operation returned NotFound. Account stautopipe097654, FileSystem raw, Path __orderqualityai_missing_probe_7c92c6af.csv; inner ErrorCode PathNotFound; message The specified path does not exist. RequestId 01b59166-501f-007f-638e-61a6b5000000.",
+            "time_generated": "2026-10-21T19:02:39.0889426Z"
+          }
+        ]
+      }
+    }
+  ],
+  "analysis": {
+    "overall_summary": "Single pipeline run failed because a copy activity could not find the specified file in ADLS Gen2 (PathNotFound).",
+    "failure_analyses": [
+      {
+        "pipeline_name": "PL_PipelineFailureAgentProbe",
+        "run_id": "5975768a-9209-4f56-92c5-2b3f06d2fff8",
+        "status": "Failed",
+        "error_code": "2200",
+        "failure_type": "UserError",
+        "observed_facts": [
+          "Pipeline run id 5975768a-9209-4f56-92c5-2b3f06d2fff8 has status Failed (time_generated 2026-10-21T19:02:41.1470289Z).",
+          "Failed activity: CopyMissingTestFile (activity_run_id dd3de5ff-c53e-48c3-9e6c-f4f5beec47df) (time_generated 2026-10-21T19:02:39.0889426Z).",
+          "Activity error_code 2200 and failure_type UserError.",
+          "Error message: ErrorCode=UserErrorFileNotFound, ADLS Gen2 operation returned NotFound.",
+          "Storage account: stautopipe097654; FileSystem: raw; Path: __orderqualityai_missing_probe_7c92c6af.csv.",
+          "Inner ErrorCode: PathNotFound; message: The specified path does not exist.",
+          "RequestId included in error: 01b59166-501f-007f-638e-61a6b5000000."
+        ],
+        "likely_cause": "The copy activity attempted to read a file that did not exist at the specified ADLS Gen2 path at execution time (PathNotFound).",
+        "confidence": "high",
+        "recommended_action": "Verify the existence and exact path of __orderqualityai_missing_probe_7c92c6af.csv in the raw filesystem of storage account stautopipe097654. Use a storage listing or portal to confirm the file path and filename casing. If the file should be produced by an upstream process, check that upstream job’s completion status and logs and ensure the file was uploaded before this pipeline run. Verify linked service credentials and permissions allow listing/reading from that filesystem. If needed, restore or upload the expected file to the specified path, then re-run the pipeline. For correlation, review storage diagnostic logs using the provided RequestId. If making changes to storage or pipeline configuration, perform a human review before applying destructive or configuration-changing actions.",
+        "safe_to_retry": false,
+        "retry_preconditions": [
+          "Confirm the file __orderqualityai_missing_probe_7c92c6af.csv exists at the exact path in filesystem 'raw' of account stautopipe097654.",
+          "Confirm the linked service credentials used by the pipeline have read/list permissions on that filesystem and path.",
+          "Confirm any upstream producer or upload job completed successfully and produced the file prior to the pipeline run time.",
+          "Verify path spelling and case exactly match (ADLS Gen2 is case-sensitive for paths).",
+          "If changes are made (upload/restore), validate with a successful storage list/read operation before retrying the pipeline."
+        ]
+      }
+    ]
+  },
+  "agent_responses": [
+    {
+      "response_id": "resp_0b370d7eb90881be006ad90cc2d5808190ba68abd73b571d94",
+      "response_text": "{\n  \"overall_summary\": \"Single pipeline run failed because a copy activity could not find the specified file in ADLS Gen2 (PathNotFound).\",\n  \"failure_analyses\": [\n    {\n      \"pipeline_name\": \"PL_PipelineFailureAgentProbe\",\n      \"run_id\": \"5975768a-9209-4f56-92c5-2b3f06d2fff8\",\n      \"status\": \"Failed\",\n      \"error_code\": \"2200\",\n      \"failure_type\": \"UserError\",\n      \"observed_facts\": [\n        \"Pipeline run id 5975768a-9209-4f56-92c5-2b3f06d2fff8 has status Failed (time_generated 2026-10-21T19:02:41.1470289Z).\",\n        \"Failed activity: CopyMissingTestFile (activity_run_id dd3de5ff-c53e-48c3-9e6c-f4f5beec47df) (time_generated 2026-10-21T19:02:39.0889426Z).\",\n        \"Activity error_code 2200 and failure_type UserError.\",\n        \"Error message: ErrorCode=UserErrorFileNotFound, ADLS Gen2 operation returned NotFound.\",\n        \"Storage account: stautopipe097654; FileSystem: raw; Path: __orderqualityai_missing_probe_7c92c6af.csv.\",\n        \"Inner ErrorCode: PathNotFound; message: The specified path does not exist.\",\n        \"RequestId included in error: 01b59166-501f-007f-638e-61a6b5000000.\"\n      ],\n      \"likely_cause\": \"The copy activity attempted to read a file that did not exist at the specified ADLS Gen2 path at execution time (PathNotFound).\",\n      \"confidence\": \"high\",\n      \"recommended_action\": \"Verify the existence and exact path of __orderqualityai_missing_probe_7c92c6af.csv in the raw filesystem of storage account stautopipe097654. Use a storage listing or portal to confirm the file path and filename casing. If the file should be produced by an upstream process, check that upstream job’s completion status and logs and ensure the file was uploaded before this pipeline run. Verify linked service credentials and permissions allow listing/reading from that filesystem. If needed, restore or upload the expected file to the specified path, then re-run the pipeline. For correlation, review storage diagnostic logs using the provided RequestId. If making changes to storage or pipeline configuration, perform a human review before applying destructive or configuration-changing actions.\",\n      \"safe_to_retry\": false,\n      \"retry_preconditions\": [\n        \"Confirm the file __orderqualityai_missing_probe_7c92c6af.csv exists at the exact path in filesystem 'raw' of account stautopipe097654.\",\n        \"Confirm the linked service credentials used by the pipeline have read/list permissions on that filesystem and path.\",\n        \"Confirm any upstream producer or upload job completed successfully and produced the file prior to the pipeline run time.\",\n        \"Verify path spelling and case exactly match (ADLS Gen2 is case-sensitive for paths).\",\n        \"If changes are made (upload/restore), validate with a successful storage list/read operation before retrying the pipeline.\"\n      ]\n    }\n  ]\n}",
+      "usage": {
+        "input_tokens": 809,
+        "output_tokens": 1482,
+        "total_tokens": 2291
+      }
+    }
+  ],
+  "model_usage": {
+    "input_tokens": 809,
+    "output_tokens": 1482,
+    "total_tokens": 2291
+  },
+  "status": "validated"
+}

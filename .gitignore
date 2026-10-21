@@ -1,0 +1,21 @@
+# Python and local environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local credentials and temporary files
+.env
+.env.*
+!.env.example
+*.tmp
+*.tmp.json
+_az_helper.tmp
+
+# Generated data and reports
+part-merged.csv
+ai_quality_report*.json
+final_quality_report.html
+pipeline_failure_analysis.json
+pipeline_failure_analysis_synthetic*.json
+pipeline_performance_analysis.json

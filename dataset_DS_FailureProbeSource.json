@@ -1,0 +1,22 @@
+{
+  "name": "DS_FailureProbeSource",
+  "properties": {
+    "linkedServiceName": {
+      "referenceName": "LS_Autopipe_Storage",
+      "type": "LinkedServiceReference"
+    },
+    "type": "DelimitedText",
+    "schema": [],
+    "typeProperties": {
+      "location": {
+        "type": "AzureBlobFSLocation",
+        "fileSystem": "raw",
+        "fileName": "__orderqualityai_missing_probe_7c92c6af.csv"
+      },
+      "columnDelimiter": ",",
+      "escapeChar": "\\",
+      "quoteChar": "\"",
+      "firstRowAsHeader": true
+    }
+  }
+}
